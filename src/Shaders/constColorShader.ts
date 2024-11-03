@@ -58,6 +58,7 @@ class ConstColorShader extends Shader
         glContext.attachShader(this.glProgram, pxShader);
 
         this.linkShaders();
+        this.getUniformLocations();
     }
 
     createVAO(): void {
@@ -76,18 +77,19 @@ class ConstColorShader extends Shader
 
     }
 
-    setToContext(camera : Camera): void {
+    getUniformLocations(): void {
+        var glContext = GLContextMan.CurrContext();
+
+        this.perspIdx  = glContext.getUniformLocation(this.glProgram, "uProjectionMatrix");
+        this.viewIdx = glContext.getUniformLocation(this.glProgram, "uViewMatrix");
+    }
+
+    setToContext(): void {
         
         var glContext = GLContextMan.CurrContext();
         glContext.useProgram(this.glProgram);
         glContext.bindVertexArray(this.glVAO);
 
-        //set uniform projection buffer data
-        var perspIdx = glContext.getUniformLocation(this.glProgram, "uProjectionMatrix");
-        glContext.uniformMatrix4fv(perspIdx, false, camera.projectionMatrix);
-        
-        var viewIdx = glContext.getUniformLocation(this.glProgram, "uViewMatrix");
-        glContext.uniformMatrix4fv(viewIdx, false, camera.viewMatrix);
     }
     
     updateBuffersFromGameObject(gameObj: GameObject): void {

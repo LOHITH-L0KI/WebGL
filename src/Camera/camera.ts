@@ -1,28 +1,36 @@
 import { mat4, vec3 } from 'gl-matrix';
+import { GLContextMan } from '../WebGLContext/GLContextMan';
 
 class Camera
 {
-    fov ;//= (45 * Math.PI) / 180;
-    aspectRatio; // = 1;
-    zNear;// = 0.1;
-    zFar; // = 100.0;
     projectionMatrix : mat4;
     viewMatrix : mat4;
 
-    constructor(_fov : any, _aspectRatio : any, _zNear : any, _zFar : any)
+    constructor()
     {
-        this.fov = _fov;
-        this.aspectRatio = _aspectRatio;
-        this.zNear = _zNear;
-        this.zFar = _zFar;
         this.projectionMatrix = mat4.create();
         this.viewMatrix = mat4.create();
+    }
 
-        mat4.perspective(this.projectionMatrix, this.fov, this.aspectRatio, this.zNear, this.zFar);
-        mat4.lookAt(this.viewMatrix
-            , [0.0, 0.0, 1.0]
-            , [0.0, 0.0, -1.5]
-            , [0.0, 1.0, 0.0]);
+    public updateViewMatrix(up_Vec: vec3, lookAt_pt: vec3, eye_pt: vec3): void{
+
+        /**
+         * Math under the hood
+         * dirVec = -(lookAt_pt - eye_pt).norm;
+         * rightVec = (upVec.cross(dirVec)).norm;
+         */
+        mat4.lookAt(this.viewMatrix, eye_pt, lookAt_pt, up_Vec);
+    }
+
+    public updateProjMatrix(fov: number, aspectRatio: number, zNear: number, zFar: number) : void{
+
+        mat4.perspective(this.projectionMatrix, fov, aspectRatio, zNear, zFar);
+    }
+
+    public setToContext(perspIdx: WebGLUniformLocation, viewIdx: WebGLUniformLocation) : void{
+        let glContext = GLContextMan.CurrContext();
+        glContext.uniformMatrix4fv(perspIdx, false, this.projectionMatrix);
+        glContext.uniformMatrix4fv(viewIdx, false, this.viewMatrix);
     }
 }
 

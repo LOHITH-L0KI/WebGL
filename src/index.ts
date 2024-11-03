@@ -15,6 +15,7 @@ import { Texture } from './Texture/texture';
 import { TextureShader } from './Shaders/textureShader';
 import { ShaderManager } from './Shaders/ShadersManager';
 import { GameObjMan } from './GameObjects/gameObjMan';
+import { Camera3D } from './Camera/camera3D';
 
 var camera : Camera;
 var gameObjMan : GameObjMan;
@@ -27,8 +28,10 @@ function main(){
     gameObjMan = new GameObjMan();
 
     //camera
-    camera = new Camera(((45 * Math.PI) / 180), 1, 0.1, 100.0);
-
+    camera = new Camera3D();
+    camera.updateProjMatrix(((45 * Math.PI) / 180), 1, 0.1, 100.0);
+    camera.updateViewMatrix([0.0, 1.0, 0.0], [0.0, 0.0, -1.5], [0.0, 0.0, 1.0]);
+    
     //create shaders
     var simpleShader = new SimpleShader() as Shader;
     ShaderManager.GetInstance().AddShader(simpleShader);
@@ -75,6 +78,7 @@ function run() : void
         // Clear the canvas before we start drawing on it.
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+        //draw by shader
         ShaderManager.GetInstance().Execute(camera);
     }
 

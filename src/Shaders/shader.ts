@@ -7,6 +7,8 @@ abstract class Shader{
     protected glProgram : WebGLProgram;
     protected glVAO : WebGLVertexArrayObject;
     private gameObjectsList : Array<GameObject>;
+    protected perspIdx: WebGLUniformLocation;
+    protected viewIdx: WebGLUniformLocation;
     
     constructor()
     {
@@ -37,7 +39,9 @@ abstract class Shader{
     draw(camera : Camera) : void
     {
         //set this to context
-        this.setToContext(camera);
+        this.setToContext();
+        //set uniform projection buffer data from camera
+        camera.setToContext(this.perspIdx, this.viewIdx);
 
         //now render each game object from the list
         this.gameObjectsList.forEach(obj => {
@@ -48,7 +52,8 @@ abstract class Shader{
 
     abstract createAndLinkShaders() : void;
     abstract createVAO() : void;
-    abstract setToContext(camera : Camera) : void;
+    abstract getUniformLocations(): void;
+    abstract setToContext() : void;
     abstract updateBuffersFromGameObject(gameObj : GameObject) : void;
     /*
         Creates a shader object from the source code and type of shader

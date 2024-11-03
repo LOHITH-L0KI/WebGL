@@ -18,7 +18,7 @@ class GLContext{
         }
 
         // Set clear color to white, fully opaque
-        this.context.clearColor(1.0, 0.7, 1.0, 1.0);
+        this.context.clearColor(0.0, 0.0, 0.0, 0.8);
         this.context.clearDepth(1.0); // Clear everything
         this.context.enable(this.context.DEPTH_TEST); // Enable depth testing
         this.context.depthFunc(this.context.LEQUAL); // Near things obscure far things
